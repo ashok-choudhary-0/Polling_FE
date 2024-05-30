@@ -7,19 +7,26 @@ import { store } from './Redux/store';
 import { Provider } from 'react-redux';
 import AllPolls from './Pages/AllPolls';
 import Login from './Pages/Login';
+import PrivateRoutes from './Components/PrivateRoutes';
 
 const router = createBrowserRouter([
   {
-    path: '/signup',
-    element: <Signup />,
+    path: '/',
+    element: <PrivateRoutes />,
+    children: [
+      {
+        path: '/all-polls',
+        element: <AllPolls />,
+      },
+    ],
   },
   {
     path: '/login',
     element: <Login />,
   },
   {
-    path: '/all-polls',
-    element: <AllPolls />,
+    path: '/signup',
+    element: <Signup />,
   },
 ]);
 

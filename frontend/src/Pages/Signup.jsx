@@ -28,7 +28,7 @@ const Signup = () => {
   const [showLoader, setShowLoader] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const state = useSelector((state) => state?.signup);
+  const state = useSelector((state) => state?.authReducer);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +43,7 @@ const Signup = () => {
     }));
   };
 
-  const handleSignUp = async (e) => {
+  const handleRegisterUser = async (e) => {
     e.preventDefault();
 
     for (let key in formData) {
@@ -70,18 +70,10 @@ const Signup = () => {
     }
 
     setShowLoader(true);
-    dispatch(handleSignup({ ...formData }));
+
+    const res = await dispatch(handleSignup({ ...formData }));
 
     setShowLoader(false);
-
-    setFormData({
-      firstName: '',
-      lastName: '',
-      username: '',
-      password: '',
-      confirmPassword: '',
-      email: '',
-    });
     setShowError({
       firstName: false,
       lastName: false,
@@ -90,14 +82,29 @@ const Signup = () => {
       email: false,
     });
     setConfirmPasswordMatch(false);
-    navigate('/all-polls');
+
+    if (res?.payload?.message === 'User created successfully') {
+      alert(res?.payload?.message);
+      navigate('/all-polls');
+      setFormData({
+        firstName: '',
+        lastName: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+      });
+    } else {
+      alert(res?.payload?.data?.message);
+      return;
+    }
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-900">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full border-2 border-gray-400">
         <h2 className="text-3xl font-bold text-center mb-4">Sign-Up</h2>
-        <form onSubmit={handleSignUp}>
+        <form onSubmit={handleRegisterUser}>
           <div className="mb-4">
             <input
               type="text"
@@ -145,6 +152,19 @@ const Signup = () => {
           </div>
           <div className="mb-4">
             <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:border-blue-500"
+            />
+            {showError?.email && (
+              <p className="text-sm text-red-500">please enter a valid email</p>
+            )}
+          </div>
+          <div className="mb-4">
+            <input
               type="password"
               name="password"
               value={formData.password}
@@ -172,19 +192,6 @@ const Signup = () => {
               <p className="text-sm text-red-500">
                 password & confirm-password should be same
               </p>
-            )}
-          </div>
-          <div className="mb-4">
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:border-blue-500"
-            />
-            {showError?.email && (
-              <p className="text-sm text-red-500">please enter a valid email</p>
             )}
           </div>
           <button
