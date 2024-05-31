@@ -24,7 +24,6 @@ export const handleAllPolls = createAsyncThunk('allpolls', async (payload) => {
         },
       }
     );
-    console.log(allpolls, "=============== slice")
     return await allpolls?.data;
   } catch (err) {
     return err?.response;
